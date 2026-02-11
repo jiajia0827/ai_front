@@ -14,6 +14,7 @@ import {
   Clock, Users, TrendingUp, TrendingDown, Minus, X, Calendar,
   Target, Activity, BarChart3
 } from 'lucide-react';
+import TaskBoardMemberView from '@/app/components/TaskBoardMemberView';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -805,6 +806,7 @@ export default function TaskBoard() {
   const [viewMode, setViewMode] = useState<'detailed' | 'compact'>('detailed');
   const [searchTerm, setSearchTerm] = useState('');
   const [showStats, setShowStats] = useState(true);
+  const [showMemberView, setShowMemberView] = useState(false);
 
   const handleTaskClick = (task: any) => {
     setSelectedTask(task);
@@ -919,6 +921,11 @@ export default function TaskBoard() {
     };
   }, [tasks]);
 
+  // 如果显示成员视图，渲染成员视图组件
+  if (showMemberView) {
+    return <TaskBoardMemberView onBack={() => setShowMemberView(false)} />;
+  }
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="h-screen flex flex-col overflow-hidden">
@@ -975,6 +982,15 @@ export default function TaskBoard() {
 
             <Button variant="outline" onClick={() => setShowStats(!showStats)}>
               <Filter className="w-4 h-4" />
+            </Button>
+
+            <Button 
+              variant="outline"
+              onClick={() => setShowMemberView(true)}
+              className="flex items-center gap-2"
+            >
+              <Users className="w-4 h-4" />
+              成员视图
             </Button>
 
             <Button className="bg-gradient-to-r from-blue-600 to-purple-600">
