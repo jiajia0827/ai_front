@@ -9,6 +9,7 @@ import TaskBoard from '@/app/components/TaskBoard';
 import SprintReviewPage from '@/app/components/SprintReviewPage';
 import DocumentManagementPage from '@/app/components/DocumentManagementPage';
 import UserPermissionPage from '@/app/components/UserPermissionPage';
+import DashboardPage from '@/app/components/DashboardPage';
 import { pbis, userStories, tasks, UserStory, Task } from '@/app/data/mockData';
 import { LayoutDashboard, GitPullRequest, Layers, FolderOpen, BarChart3, Play, CheckSquare, BookOpen, Kanban, Users, MessageSquare, FileText, Settings, ChevronDown, ChevronRight } from 'lucide-react';
 export default function App() {
@@ -21,6 +22,10 @@ export default function App() {
   const renderMainContent = () => {
     if (activeNavItem === '项目列表') {
       return <ProjectList />;
+    }
+    
+    if (activeNavItem === '仪表盘') {
+      return <DashboardPage />;
     }
     
     if (activeNavItem === '产品待办项PBIs') {
