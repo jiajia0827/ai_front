@@ -1,0 +1,261 @@
+export type ProjectStatus = "active" | "archived"
+export type QualityGrade = "A" | "B" | "C"
+export type HealthStatus = "normal" | "offtrack" | "at-risk"
+
+export interface TeamMember {
+  initials: string
+  name: string
+  role: string
+}
+
+export interface Project {
+  id: string
+  name: string
+  status: ProjectStatus
+  health: HealthStatus
+  isMyResponsibility: boolean
+  teamSize: number
+  remainingDays: number
+  progress: number
+  completedStories: number
+  totalStories: number
+  velocity: number
+  velocityHistory: number[]
+  sprintWeeks: number
+  currentSprint: number
+  totalSprints: number
+  quality: QualityGrade
+  alerts: string[]
+  sprintEndDate: string
+  issueCount: number
+  members: TeamMember[]
+}
+
+export const projects: Project[] = [
+  {
+    id: "1",
+    name: "电商平台重构",
+    status: "active",
+    health: "normal",
+    isMyResponsibility: true,
+    teamSize: 5,
+    remainingDays: 12,
+    progress: 68,
+    completedStories: 13,
+    totalStories: 19,
+    velocity: 32,
+    velocityHistory: [28, 30, 32],
+    sprintWeeks: 2,
+    currentSprint: 4,
+    totalSprints: 6,
+    quality: "A",
+    alerts: [],
+    sprintEndDate: "2026年3月15日",
+    issueCount: 6,
+    members: [
+      { initials: "ZW", name: "张伟", role: "前端开发" },
+      { initials: "LM", name: "李明", role: "后端开发" },
+      { initials: "CX", name: "陈曦", role: "UI设计" },
+      { initials: "HY", name: "黄宇", role: "测试工程师" },
+      { initials: "QR", name: "秦蕊", role: "产品经理" },
+    ],
+  },
+  {
+    id: "2",
+    name: "移动端优化项目",
+    status: "active",
+    health: "offtrack",
+    isMyResponsibility: false,
+    teamSize: 4,
+    remainingDays: 8,
+    progress: 42,
+    completedStories: 8,
+    totalStories: 19,
+    velocity: 28,
+    velocityHistory: [35, 30, 28],
+    sprintWeeks: 2,
+    currentSprint: 3,
+    totalSprints: 5,
+    quality: "B",
+    alerts: ["滞后2天", "代码质量下降"],
+    sprintEndDate: "2026年2月28日",
+    issueCount: 11,
+    members: [
+      { initials: "WJ", name: "王军", role: "全栈开发" },
+      { initials: "SL", name: "孙磊", role: "iOS开发" },
+      { initials: "FD", name: "冯丹", role: "Android开发" },
+      { initials: "MK", name: "马凯", role: "测试工程师" },
+    ],
+  },
+  {
+    id: "3",
+    name: "数据分析系统",
+    status: "active",
+    health: "offtrack",
+    isMyResponsibility: true,
+    teamSize: 6,
+    remainingDays: 15,
+    progress: 25,
+    completedStories: 5,
+    totalStories: 20,
+    velocity: 18,
+    velocityHistory: [24, 20, 18],
+    sprintWeeks: 2,
+    currentSprint: 2,
+    totalSprints: 6,
+    quality: "C",
+    alerts: ["1个阻塞", "滞后5天"],
+    sprintEndDate: "2026年3月20日",
+    issueCount: 15,
+    members: [
+      { initials: "TY", name: "唐瑶", role: "数据工程师" },
+      { initials: "RH", name: "任航", role: "后端开发" },
+      { initials: "BN", name: "白楠", role: "前端开发" },
+      { initials: "XP", name: "许鹏", role: "DevOps" },
+      { initials: "GS", name: "郭爽", role: "产品经理" },
+      { initials: "JL", name: "贾亮", role: "测试工程师" },
+    ],
+  },
+  {
+    id: "4",
+    name: "AI智能推荐引擎",
+    status: "active",
+    health: "normal",
+    isMyResponsibility: false,
+    teamSize: 7,
+    remainingDays: 6,
+    progress: 85,
+    completedStories: 17,
+    totalStories: 20,
+    velocity: 45,
+    velocityHistory: [40, 42, 45],
+    sprintWeeks: 2,
+    currentSprint: 5,
+    totalSprints: 6,
+    quality: "A",
+    alerts: [],
+    sprintEndDate: "2026年2月20日",
+    issueCount: 3,
+    members: [
+      { initials: "DW", name: "邓威", role: "算法工程师" },
+      { initials: "KZ", name: "孔哲", role: "ML工程师" },
+      { initials: "YN", name: "叶宁", role: "后端开发" },
+      { initials: "AQ", name: "艾琪", role: "前端开发" },
+      { initials: "PL", name: "彭磊", role: "数据工程师" },
+      { initials: "VT", name: "万婷", role: "测试工程师" },
+      { initials: "EM", name: "尹梅", role: "产品经理" },
+    ],
+  },
+  {
+    id: "5",
+    name: "用户权限系统升级",
+    status: "active",
+    health: "at-risk",
+    isMyResponsibility: true,
+    teamSize: 3,
+    remainingDays: 10,
+    progress: 55,
+    completedStories: 11,
+    totalStories: 20,
+    velocity: 25,
+    velocityHistory: [22, 24, 25],
+    sprintWeeks: 2,
+    currentSprint: 3,
+    totalSprints: 5,
+    quality: "B",
+    alerts: ["测试覆盖不足"],
+    sprintEndDate: "2026年3月10日",
+    issueCount: 9,
+    members: [
+      { initials: "XJ", name: "徐佳", role: "全栈开发" },
+      { initials: "NQ", name: "倪强", role: "后端开发" },
+      { initials: "RM", name: "阮敏", role: "测试工程师" },
+    ],
+  },
+  {
+    id: "6",
+    name: "支付网关集成",
+    status: "archived",
+    health: "normal",
+    isMyResponsibility: false,
+    teamSize: 4,
+    remainingDays: 0,
+    progress: 100,
+    completedStories: 15,
+    totalStories: 15,
+    velocity: 30,
+    velocityHistory: [28, 29, 30],
+    sprintWeeks: 2,
+    currentSprint: 4,
+    totalSprints: 4,
+    quality: "A",
+    alerts: [],
+    sprintEndDate: "2026年1月30日",
+    issueCount: 0,
+    members: [
+      { initials: "BG", name: "毕刚", role: "后端开发" },
+      { initials: "SF", name: "沈芳", role: "前端开发" },
+      { initials: "LW", name: "吕文", role: "安全工程师" },
+      { initials: "HT", name: "何涛", role: "测试工程师" },
+    ],
+  },
+  {
+    id: "7",
+    name: "微服务架构重构",
+    status: "active",
+    health: "normal",
+    isMyResponsibility: true,
+    teamSize: 8,
+    remainingDays: 14,
+    progress: 72,
+    completedStories: 18,
+    totalStories: 25,
+    velocity: 38,
+    velocityHistory: [34, 36, 38],
+    sprintWeeks: 2,
+    currentSprint: 4,
+    totalSprints: 6,
+    quality: "A",
+    alerts: [],
+    sprintEndDate: "2026年3月18日",
+    issueCount: 7,
+    members: [
+      { initials: "YP", name: "杨鹏", role: "架构师" },
+      { initials: "CL", name: "蔡磊", role: "后端开发" },
+      { initials: "ZK", name: "赵坤", role: "后端开发" },
+      { initials: "WB", name: "魏冰", role: "DevOps" },
+      { initials: "MD", name: "孟丹", role: "前端开发" },
+      { initials: "JN", name: "姜楠", role: "测试工程师" },
+      { initials: "RT", name: "任婷", role: "产品经理" },
+      { initials: "FQ", name: "范琦", role: "DBA" },
+    ],
+  },
+  {
+    id: "8",
+    name: "客户服务系统",
+    status: "active",
+    health: "at-risk",
+    isMyResponsibility: false,
+    teamSize: 5,
+    remainingDays: 18,
+    progress: 35,
+    completedStories: 7,
+    totalStories: 20,
+    velocity: 22,
+    velocityHistory: [26, 24, 22],
+    sprintWeeks: 2,
+    currentSprint: 2,
+    totalSprints: 5,
+    quality: "B",
+    alerts: ["滞后3天"],
+    sprintEndDate: "2026年4月01日",
+    issueCount: 12,
+    members: [
+      { initials: "GH", name: "顾华", role: "前端开发" },
+      { initials: "TV", name: "陶薇", role: "后端开发" },
+      { initials: "NM", name: "聂明", role: "UI设计" },
+      { initials: "QW", name: "钱文", role: "测试工程师" },
+      { initials: "AE", name: "安尔", role: "产品经理" },
+    ],
+  },
+]

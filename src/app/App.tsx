@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { GrapeMindMap } from '@/app/components/GrapeMindMap';
 import { AcceptanceRadarChart, AllocationDonutChart, TimeDistributionBarChart } from '@/app/components/DashboardCharts';
 import { GanttChart } from '@/app/components/GanttChart';
-import { ProjectList } from '@/app/components/ProjectList';
+import { ProjectsPage } from '@/app/components/projects-page';
 import { PBIManagement } from '@/app/components/PBIManagement';
 import DailyStandupPage from '@/app/components/DailyStandupPage';
 import TaskBoard from '@/app/components/TaskBoard';
@@ -24,7 +24,7 @@ export default function App() {
 
   const renderMainContent = () => {
     if (activeNavItem === '项目列表') {
-      return <ProjectList />;
+      return <ProjectsPage />;
     }
     
     if (activeNavItem === '仪表盘') {
