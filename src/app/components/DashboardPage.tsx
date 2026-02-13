@@ -6,16 +6,29 @@ import { PlannedVsActualChart } from './PlannedVsActualChart';
 import { TeamWorkloadChart } from './TeamWorkloadChart';
 import { BacklogChart } from './BacklogChart';
 import { RequirementVsDefectChart } from './RequirementVsDefectChart';
-import { Target, CheckCircle2, Clock, TrendingUp } from 'lucide-react';
+import { Target, CheckCircle2, Clock, TrendingUp, LayoutDashboard } from 'lucide-react';
 
-export default function DashboardPage() {
+interface DashboardPageProps {
+  onNavigateToScrum?: () => void;
+}
+
+export default function DashboardPage({ onNavigateToScrum }: DashboardPageProps) {
   return (
     <div className="flex-1 p-8 overflow-y-auto bg-gray-50">
       <div className="max-w-[1600px] mx-auto">
         {/* 页面标题 */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
-          <p className="text-sm text-gray-400 mt-1">实时监控项目进度，数据驱动决策</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
+            <p className="text-sm text-gray-400 mt-1">实时监控项目进度，数据驱动决策</p>
+          </div>
+          <button
+            onClick={onNavigateToScrum}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm font-medium"
+          >
+            <LayoutDashboard size={18} />
+            敏捷看板
+          </button>
         </div>
 
         {/* 顶部：关键指标卡片 */}

@@ -10,6 +10,7 @@ import SprintReviewPage from '@/app/components/SprintReviewPage';
 import DocumentManagementPage from '@/app/components/DocumentManagementPage';
 import UserPermissionPage from '@/app/components/UserPermissionPage';
 import DashboardPage from '@/app/components/DashboardPage';
+import { ScrumDashboard } from '@/app/components/scrum-dashboard';
 import { pbis, userStories, tasks, UserStory, Task } from '@/app/data/mockData';
 import { LayoutDashboard, GitPullRequest, Layers, FolderOpen, BarChart3, Play, CheckSquare, BookOpen, Kanban, Users, MessageSquare, FileText, Settings, ChevronDown, ChevronRight } from 'lucide-react';
 export default function App() {
@@ -25,7 +26,11 @@ export default function App() {
     }
     
     if (activeNavItem === '仪表盘') {
-      return <DashboardPage />;
+      return <DashboardPage onNavigateToScrum={() => setActiveNavItem('敏捷看板')} />;
+    }
+    
+    if (activeNavItem === '敏捷看板') {
+      return <ScrumDashboard onBack={() => setActiveNavItem('仪表盘')} />;
     }
     
     if (activeNavItem === '产品待办项PBIs') {
