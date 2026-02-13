@@ -1,22 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer,
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
+  Area, XAxis, YAxis, CartesianGrid, Tooltip,
   PieChart, Pie, Cell,
   BarChart, Bar, Legend,
   ComposedChart, Line
 } from 'recharts';
-import { motion } from 'motion/react';
 import { cn } from './ui/utils';
-import { TrendingUp, PieChart as PieChartIcon, Activity, Target, BarChart2, Zap } from 'lucide-react';
+import { TrendingUp, PieChart as PieChartIcon, Target, BarChart2, Zap } from 'lucide-react';
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
-const GRADIENTS = [
-  ['#60a5fa', '#2563eb'], // Blue
-  ['#34d399', '#059669'], // Green
-  ['#fbbf24', '#d97706'], // Amber
-  ['#f87171', '#dc2626'], // Red
-];
 
 export function AnalyticsPanel() {
   const [activeTab, setActiveTab] = useState<'radar' | 'trend' | 'dist' | 'compare'>('radar');
@@ -203,7 +196,7 @@ export function AnalyticsPanel() {
                       dataKey="value"
                       cornerRadius={6}
                     >
-                      {distData.map((entry, index) => (
+                      {distData.map((_, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} strokeWidth={0} />
                       ))}
                     </Pie>
@@ -235,7 +228,7 @@ export function AnalyticsPanel() {
                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }} 
                    />
                    <Bar dataKey="tasks" name="任务完成数" fill="#3b82f6" radius={[6, 6, 6, 6]} barSize={32}>
-                      {compareData.map((entry, index) => (
+                      {compareData.map((_, index) => (
                         <Cell key={`cell-${index}`} fill={index === 0 ? '#2563eb' : '#3b82f6'} />
                       ))}
                    </Bar>

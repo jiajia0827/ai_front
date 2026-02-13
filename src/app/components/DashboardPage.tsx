@@ -6,13 +6,14 @@ import { PlannedVsActualChart } from './PlannedVsActualChart';
 import { TeamWorkloadChart } from './TeamWorkloadChart';
 import { BacklogChart } from './BacklogChart';
 import { RequirementVsDefectChart } from './RequirementVsDefectChart';
-import { Target, CheckCircle2, Clock, TrendingUp, LayoutDashboard } from 'lucide-react';
+import { Target, CheckCircle2, Clock, TrendingUp, LayoutDashboard, Activity } from 'lucide-react';
 
 interface DashboardPageProps {
   onNavigateToScrum?: () => void;
+  onNavigateToRisk?: () => void;
 }
 
-export default function DashboardPage({ onNavigateToScrum }: DashboardPageProps) {
+export default function DashboardPage({ onNavigateToScrum, onNavigateToRisk }: DashboardPageProps) {
   return (
     <div className="flex-1 p-8 overflow-y-auto bg-gray-50">
       <div className="max-w-[1600px] mx-auto">
@@ -22,13 +23,22 @@ export default function DashboardPage({ onNavigateToScrum }: DashboardPageProps)
             <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
             <p className="text-sm text-gray-400 mt-1">实时监控项目进度，数据驱动决策</p>
           </div>
-          <button
-            onClick={onNavigateToScrum}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm font-medium"
-          >
-            <LayoutDashboard size={18} />
-            敏捷看板
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={onNavigateToRisk}
+              className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors shadow-sm font-medium"
+            >
+              <Activity size={18} />
+              健康风险仪表盘
+            </button>
+            <button
+              onClick={onNavigateToScrum}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shadow-sm font-medium"
+            >
+              <LayoutDashboard size={18} />
+              敏捷看板
+            </button>
+          </div>
         </div>
 
         {/* 顶部：关键指标卡片 */}

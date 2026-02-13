@@ -11,6 +11,7 @@ import DocumentManagementPage from '@/app/components/DocumentManagementPage';
 import UserPermissionPage from '@/app/components/UserPermissionPage';
 import DashboardPage from '@/app/components/DashboardPage';
 import { ScrumDashboard } from '@/app/components/scrum-dashboard';
+import { RiskDashboard } from '@/app/components/RiskDashboard';
 import { pbis, userStories, tasks, UserStory, Task } from '@/app/data/mockData';
 import { LayoutDashboard, GitPullRequest, Layers, FolderOpen, BarChart3, Play, CheckSquare, BookOpen, Kanban, Users, MessageSquare, FileText, Settings, ChevronDown, ChevronRight } from 'lucide-react';
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [activeNavItem, setActiveNavItem] = useState('用户故事与任务');
   const [sprintExpanded, setSprintExpanded] = useState(true);
+  const [showRiskDashboard, setShowRiskDashboard] = useState(false);
 
   const renderMainContent = () => {
     if (activeNavItem === '项目列表') {
@@ -26,7 +28,17 @@ export default function App() {
     }
     
     if (activeNavItem === '仪表盘') {
-      return <DashboardPage onNavigateToScrum={() => setActiveNavItem('敏捷看板')} />;
+      return (
+        <>
+          <DashboardPage 
+            onNavigateToScrum={() => setActiveNavItem('敏捷看板')} 
+            onNavigateToRisk={() => setShowRiskDashboard(true)}
+          />
+          {showRiskDashboard && (
+            <RiskDashboard onClose={() => setShowRiskDashboard(false)} />
+          )}
+        </>
+      );
     }
     
     if (activeNavItem === '敏捷看板') {
