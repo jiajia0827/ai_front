@@ -3,12 +3,14 @@
 import { ProductBacklog } from "./ProductBacklog";
 import { ScrumMaster } from "./ScrumMaster";
 import { DepartmentSection } from "./DepartmentSection";
-import { FolderKanban, ChevronDown, ChevronUp, FileText, Download } from "lucide-react";
+import ScrumDocCards from "./scrum-doc-card";
+import { FolderKanban, ChevronDown, ChevronUp, FileText, Download, List, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
 
 export default function DocumentManagementPage() {
   const [showDetails, setShowDetails] = useState(false);
+  const [showDocList, setShowDocList] = useState(false);
 
   const sprintExecution = {
     name: "Sprint执行文档",
@@ -98,11 +100,23 @@ export default function DocumentManagementPage() {
   ];
 
   return (
-    <div className="h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 overflow-y-auto custom-scrollbar">
+    <div className="h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-blue-100 overflow-y-auto">
       <div className="py-6 px-4">
         <div className="max-w-[1600px] mx-auto">
         {/* Header - Left Aligned */}
-        <div className="mb-6 flex items-center justify-between bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200">
+        <div className="mb-6 flex items-center justify-between bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200">
+          {showDocList ? (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="text-xs border-slate-300 hover:bg-slate-50 hover:border-slate-400 transition-all"
+              onClick={() => setShowDocList(false)}
+            >
+              <ArrowLeft className="h-3.5 w-3.5 mr-1" />
+              返回
+            </Button>
+          ) : (
+            <>
           <div>
             <div className="flex items-center gap-2 mb-1">
               <div className="p-2 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl shadow-lg">
@@ -132,6 +146,15 @@ export default function DocumentManagementPage() {
             <div className="h-12 w-px bg-gradient-to-b from-transparent via-slate-300 to-transparent"></div>
             
             <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="text-xs border-slate-300 hover:bg-slate-50 hover:border-slate-400 transition-all"
+                onClick={() => setShowDocList(!showDocList)}
+              >
+                <List className="h-3.5 w-3.5 mr-1" />
+                文档列表
+              </Button>
               <Button variant="outline" size="sm" className="text-xs border-slate-300 hover:bg-slate-50 hover:border-slate-400 transition-all">
                 <FileText className="h-3.5 w-3.5 mr-1" />
                 新建文档
@@ -142,21 +165,27 @@ export default function DocumentManagementPage() {
               </Button>
             </div>
           </div>
+          </>
+          )}
         </div>
 
+        {/* Document List View */}
+        {showDocList ? (
+          <div className="flex justify-center">
+            <ScrumDocCards />
+          </div>
+        ) : (
+          <>
         {/* Document Management Structure */}
-        <div className="flex flex-col items-center gap-6">
-          {/* Product Backlog */}
-          <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center gap-4">
+          {/* Product Backlog and Sprint Planning - Horizontal Layout */}
+          <div className="flex gap-6 items-center">
             <ProductBacklog />
-            <div className="h-12 w-0.5 bg-gray-300"></div>
-          </div>
-
-          {/* Scrum Master / Sprint Planning */}
-          <div className="flex flex-col items-center">
+            <div className="h-0.5 w-8 bg-gray-300"></div>
             <ScrumMaster />
-            <div className="h-12 w-0.5 bg-gray-300"></div>
           </div>
+          
+          <div className="h-8 w-0.5 bg-gray-300"></div>
 
           {/* Document Categories - All at Same Level */}
           <div className="w-full overflow-x-auto">
@@ -362,6 +391,8 @@ export default function DocumentManagementPage() {
               </div>
             </div>
           </div>
+        )}
+        </>
         )}
       </div>
       </div>

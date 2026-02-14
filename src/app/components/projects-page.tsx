@@ -76,7 +76,7 @@ export function ProjectsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent hover:scrollbar-thumb-slate-400">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-blue-100 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent hover:scrollbar-thumb-slate-400">
       <div className="mx-auto max-w-7xl px-6 py-10">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
