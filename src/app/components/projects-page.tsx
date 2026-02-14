@@ -12,13 +12,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/app/components/ui/pagination"
-import { Grid3X3, PieChart, Search, Filter } from "lucide-react"
+import { Grid3X3, PieChart, Search, Filter, BarChart3 } from "lucide-react"
+import { GanttChart } from "@/app/components/gantt-chart"
 
 const ITEMS_PER_PAGE = 6
 
 export function ProjectsPage() {
   const [currentPage, setCurrentPage] = useState(1)
-  const [viewMode, setViewMode] = useState<'grid' | 'analytics'>('grid')
+  const [viewMode, setViewMode] = useState<'grid' | 'analytics' | 'gantt'>('grid')
   const [searchTerm, setSearchTerm] = useState('')
   const [filterStatus, setFilterStatus] = useState<'all' | 'normal' | 'at-risk' | 'offtrack'>('all')
 
@@ -70,6 +71,10 @@ export function ProjectsPage() {
     return <ProjectAnalytics projects={analyticsProjects} onBackToGrid={() => setViewMode('grid')} />
   }
 
+  if (viewMode === 'gantt') {
+    return <GanttChart onBack={() => setViewMode('grid')} />
+  }
+
   return (
     <div className="min-h-screen bg-background overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent hover:scrollbar-thumb-slate-400">
       <div className="mx-auto max-w-7xl px-6 py-10">
@@ -92,6 +97,13 @@ export function ProjectsPage() {
                 title="分析视图"
               >
                 <PieChart size={16} />
+              </button>
+              <button 
+                onClick={() => setViewMode('gantt')}
+                className="p-2 rounded-md transition-colors hover:bg-slate-200 text-slate-600"
+                title="项目横道图"
+              >
+                <BarChart3 size={16} />
               </button>
             </div>
             <button className="rounded-full bg-[hsl(var(--primary))] px-7 py-2.5 text-sm font-medium text-[hsl(var(--primary-foreground))] hover:opacity-90 transition-opacity">
