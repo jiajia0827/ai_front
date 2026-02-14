@@ -1,8 +1,8 @@
 "use client"
 
 import { useRef, useCallback, useState } from "react"
-import type { Project, SubTask } from "@/lib/gantt-data"
-import { STATUS_COLORS, TASK_TYPE_COLORS, TASK_TYPE_LABELS, RISK_LABELS } from "@/lib/gantt-data"
+import type { Project, SubTask } from "@/lib/gantt-data.ts"
+import { STATUS_COLORS, TASK_TYPE_COLORS, TASK_TYPE_LABELS, RISK_LABELS } from "@/lib/gantt-data.ts"
 import { cn } from "@/lib/utils"
 
 interface TimelineProps {

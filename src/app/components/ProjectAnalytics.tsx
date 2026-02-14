@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Search, Plus, ChevronDown, Grid3X3, PieChart, TrendingUp, Users, Target, Activity, BarChart3, Zap } from 'lucide-react';
+import { ProjectHealthDashboard } from '@/app/components/project-health-dashboard';
 
 interface Project {
   id: string;
@@ -264,48 +265,9 @@ export function ProjectAnalytics({ projects, onBackToGrid }: ProjectAnalyticsPro
           {/* Second Row - Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            {/* Health Overview Donut Chart */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-              <h3 className="text-lg font-semibold text-slate-800 mb-6">项目健康度分布</h3>
-              <div className="flex items-center justify-center mb-6">
-                <div className="relative w-40 h-40">
-                  <svg viewBox="0 0 200 200" className="w-full h-full transform -rotate-90">
-                    <circle cx="100" cy="100" r="70" fill="none" stroke="#f1f5f9" strokeWidth="20" />
-                    <circle cx="100" cy="100" r="70" fill="none" stroke="#4CAF50" strokeWidth="20"
-                      strokeDasharray={`${(healthStats.healthy / filteredProjects.length) * 440} 440`} />
-                    <circle cx="100" cy="100" r="70" fill="none" stroke="#FF9800" strokeWidth="20"
-                      strokeDasharray={`${(healthStats.warning / filteredProjects.length) * 440} 440`}
-                      strokeDashoffset={`-${(healthStats.healthy / filteredProjects.length) * 440}`} />
-                    <circle cx="100" cy="100" r="70" fill="none" stroke="#F44336" strokeWidth="20"
-                      strokeDasharray={`${(healthStats.critical / filteredProjects.length) * 440} 440`}
-                      strokeDashoffset={`-${((healthStats.healthy + healthStats.warning) / filteredProjects.length) * 440}`} />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-slate-800">{filteredProjects.length}</div>
-                      <div className="text-sm text-slate-500">项目</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  <span className="text-sm text-slate-600">健康 {healthStats.healthy}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-orange-500"></div>
-                  <span className="text-sm text-slate-600">警告 {healthStats.warning}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <span className="text-sm text-slate-600">危险 {healthStats.critical}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-gray-400"></div>
-                  <span className="text-sm text-slate-600">归档 {healthStats.archived}</span>
-                </div>
-              </div>
+            {/* Health Overview - New Component */}
+            <div className="flex items-center justify-center">
+              <ProjectHealthDashboard />
             </div>
 
             {/* Progress Distribution */}
