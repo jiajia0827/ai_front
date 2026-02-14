@@ -1,6 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { Search, Plus, ChevronDown, Grid3X3, PieChart, TrendingUp, Users, Target, Activity, BarChart3, Zap } from 'lucide-react';
+import { Search, Plus, ChevronDown, Grid3X3, PieChart, TrendingUp, TrendingDown, Users, Target, Activity, BarChart3, Zap, RefreshCw, Clock } from 'lucide-react';
 import { ProjectHealthDashboard } from '@/app/components/project-health-dashboard';
+import ProjectProgressChart from '@/app/components/project-progress-chart';
+import TeamSizeChart from '@/app/components/team-size-chart';
+import QualityGradeChart from '@/app/components/quality-grade-chart';
+import IterationSpeedChart from '@/app/components/iteration-speed-chart';
 
 interface Project {
   id: string;
@@ -24,23 +28,23 @@ interface ProjectAnalyticsProps {
 }
 
 export function ProjectAnalytics({ projects, onBackToGrid }: ProjectAnalyticsProps) {
-  const [activeFilter, setActiveFilter] = useState('全部');
-  const [sortBy, setSortBy] = useState('最近更新');
-  const [searchTerm, setSearchTerm] = useState('');
   const [isAutoPlay, setIsAutoPlay] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdate, setLastUpdate] = useState(new Date());
+  const [pageVisible, setPageVisible] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
 
-  const filters = ['全部', '我负责的', '有风险', '活跃中', '已归档'];
-  const sortOptions = ['最近更新', '名称', '风险等级'];
+  useEffect(() => {
+    setPageVisible(true);
+  }, []);
 
-  // Filter projects based on active filter
-  const filteredProjects = projects.filter(project => {
-    if (activeFilter === '我负责的') return project.isOwner;
-    if (activeFilter === '有风险') return project.risks.length > 0;
-    if (activeFilter === '活跃中') return project.isActive;
-    if (activeFilter === '已归档') return !project.isActive;
-    return true;
-  });
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setLastUpdate(new Date());
+    setTimeout(() => setIsRefreshing(false), 1000);
+  };
+
+  const filteredProjects = projects;
 
   // Auto-scroll effect
   useEffect(() => {
@@ -95,14 +99,40 @@ export function ProjectAnalytics({ projects, onBackToGrid }: ProjectAnalyticsPro
   const teamMembers = ['张三', '李四', '王五', '赵六', '钱七', '孙八'];
 
   return (
-    <div className="flex-1 flex flex-col bg-gradient-to-br from-slate-50 to-slate-100 min-h-0">
+    <div className="flex-1 flex flex-col bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 min-h-0 relative overflow-hidden">
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle at 2px 2px, rgb(100 116 139) 1px, transparent 0)',
+          backgroundSize: '48px 48px'
+        }} />
+      </div>
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 px-8 py-6 shadow-sm flex-shrink-0">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold text-slate-900">项目分析视图</h1>
-          
+      <div className="relative bg-white/80 backdrop-blur-xl border-b border-slate-200/60 px-8 py-3 shadow-sm flex-shrink-0 z-10">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {/* View Toggle */}
+            <h1 className={`text-2xl font-bold text-slate-900 transition-all duration-700 ${
+              pageVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+            }`}>项目分析视图</h1>
+            <div className={`flex items-center gap-2 text-xs text-slate-500 transition-all duration-700 delay-100 ${
+              pageVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+            }`}>
+              <Clock size={12} />
+              <span>更新于 {lastUpdate.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}</span>
+            </div>
+          </div>
+          
+          <div className={`flex items-center gap-3 transition-all duration-700 delay-300 ${
+            pageVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'
+          }`}>
+            <button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 transition-all hover:scale-105 disabled:opacity-50"
+              title="刷新数据"
+            >
+              <RefreshCw size={16} className={`text-slate-600 ${isRefreshing ? 'animate-spin' : ''}`} />
+            </button>
+
             <div className="flex items-center bg-slate-100 rounded-lg p-1">
               <button 
                 onClick={onBackToGrid}
@@ -115,58 +145,6 @@ export function ProjectAnalytics({ projects, onBackToGrid }: ProjectAnalyticsPro
                 <PieChart size={16} />
               </button>
             </div>
-
-            <button className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200 font-medium">
-              <Plus size={18} />
-              新建项目
-            </button>
-          </div>
-        </div>
-
-        {/* Filters & Search */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {filters.map((filter) => (
-              <button
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  activeFilter === filter
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
-                }`}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-3">
-            {/* Sort Dropdown */}
-            <div className="relative">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="appearance-none pl-4 pr-10 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer font-medium"
-              >
-                {sortOptions.map((option) => (
-                  <option key={option} value={option}>{option}</option>
-                ))}
-              </select>
-              <ChevronDown size={16} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 pointer-events-none" />
-            </div>
-
-            {/* Search */}
-            <div className="relative">
-              <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
-              <input
-                type="text"
-                placeholder="搜索项目…"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 w-64 text-sm"
-              />
-            </div>
           </div>
         </div>
       </div>
@@ -176,9 +154,11 @@ export function ProjectAnalytics({ projects, onBackToGrid }: ProjectAnalyticsPro
         <div className="space-y-8">
           
           {/* Top Row - Key Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="relative overflow-hidden bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-blue-600/20 rounded-full -translate-y-8 translate-x-8"></div>
+          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-700 ${
+            pageVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}>
+            <div className="group relative overflow-hidden bg-white/60 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-slate-200/60 hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 cursor-pointer">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-blue-600/20 rounded-full -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-500"></div>
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-4">
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -191,15 +171,21 @@ export function ProjectAnalytics({ projects, onBackToGrid }: ProjectAnalyticsPro
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 bg-slate-200 rounded-full h-2">
-                    <div className="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full" style={{ width: '75%' }}></div>
+                    <div className="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full transition-all duration-1000" style={{ width: pageVisible ? '75%' : '0%' }}></div>
                   </div>
-                  <span className="text-xs text-green-600 font-medium">+12%</span>
+                  <div className="flex items-center gap-1">
+                    <TrendingUp size={12} className="text-green-600" />
+                    <span className="text-xs text-green-600 font-medium">12%</span>
+                  </div>
                 </div>
+                <svg className="w-full h-8 mt-2 opacity-40" viewBox="0 0 100 20">
+                  <polyline points="0,15 20,12 40,14 60,8 80,10 100,5" fill="none" stroke="#3b82f6" strokeWidth="2" />
+                </svg>
               </div>
             </div>
             
-            <div className="relative overflow-hidden bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-400/20 to-green-600/20 rounded-full -translate-y-8 translate-x-8"></div>
+            <div className="group relative overflow-hidden bg-white/60 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-slate-200/60 hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 cursor-pointer">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-400/20 to-green-600/20 rounded-full -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-500"></div>
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-4">
                   <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -212,15 +198,21 @@ export function ProjectAnalytics({ projects, onBackToGrid }: ProjectAnalyticsPro
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 bg-slate-200 rounded-full h-2">
-                    <div className="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-full" style={{ width: `${(healthStats.healthy / filteredProjects.length) * 100}%` }}></div>
+                    <div className="bg-gradient-to-r from-green-400 to-green-600 h-2 rounded-full transition-all duration-1000" style={{ width: pageVisible ? `${(healthStats.healthy / filteredProjects.length) * 100}%` : '0%' }}></div>
                   </div>
-                  <span className="text-xs text-slate-600 font-medium">{Math.round((healthStats.healthy / filteredProjects.length) * 100)}%</span>
+                  <div className="flex items-center gap-1">
+                    <TrendingUp size={12} className="text-green-600" />
+                    <span className="text-xs text-slate-600 font-medium">{Math.round((healthStats.healthy / filteredProjects.length) * 100)}%</span>
+                  </div>
                 </div>
+                <svg className="w-full h-8 mt-2 opacity-40" viewBox="0 0 100 20">
+                  <polyline points="0,12 20,10 40,11 60,7 80,8 100,6" fill="none" stroke="#10b981" strokeWidth="2" />
+                </svg>
               </div>
             </div>
             
-            <div className="relative overflow-hidden bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-red-400/20 to-red-600/20 rounded-full -translate-y-8 translate-x-8"></div>
+            <div className="group relative overflow-hidden bg-white/60 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-slate-200/60 hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 cursor-pointer">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-red-400/20 to-red-600/20 rounded-full -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-500"></div>
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-4">
                   <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -233,15 +225,21 @@ export function ProjectAnalytics({ projects, onBackToGrid }: ProjectAnalyticsPro
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 bg-slate-200 rounded-full h-2">
-                    <div className="bg-gradient-to-r from-red-400 to-red-600 h-2 rounded-full" style={{ width: `${((healthStats.warning + healthStats.critical) / filteredProjects.length) * 100}%` }}></div>
+                    <div className="bg-gradient-to-r from-red-400 to-red-600 h-2 rounded-full transition-all duration-1000" style={{ width: pageVisible ? `${((healthStats.warning + healthStats.critical) / filteredProjects.length) * 100}%` : '0%' }}></div>
                   </div>
-                  <span className="text-xs text-red-600 font-medium">需关注</span>
+                  <div className="flex items-center gap-1">
+                    <Activity size={12} className="text-red-600" />
+                    <span className="text-xs text-red-600 font-medium">需关注</span>
+                  </div>
                 </div>
+                <svg className="w-full h-8 mt-2 opacity-40" viewBox="0 0 100 20">
+                  <polyline points="0,10 20,13 40,11 60,15 80,14 100,16" fill="none" stroke="#ef4444" strokeWidth="2" />
+                </svg>
               </div>
             </div>
             
-            <div className="relative overflow-hidden bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-purple-600/20 rounded-full -translate-y-8 translate-x-8"></div>
+            <div className="group relative overflow-hidden bg-white/60 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-slate-200/60 hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300 cursor-pointer">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-purple-600/20 rounded-full -translate-y-8 translate-x-8 group-hover:scale-150 transition-transform duration-500"></div>
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-4">
                   <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -254,102 +252,58 @@ export function ProjectAnalytics({ projects, onBackToGrid }: ProjectAnalyticsPro
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 bg-slate-200 rounded-full h-2">
-                    <div className="bg-gradient-to-r from-purple-400 to-purple-600 h-2 rounded-full" style={{ width: '68%' }}></div>
+                    <div className="bg-gradient-to-r from-purple-400 to-purple-600 h-2 rounded-full transition-all duration-1000" style={{ width: pageVisible ? '68%' : '0%' }}></div>
                   </div>
-                  <span className="text-xs text-slate-600 font-medium">点/周</span>
+                  <div className="flex items-center gap-1">
+                    <Zap size={12} className="text-purple-600" />
+                    <span className="text-xs text-slate-600 font-medium">点/周</span>
+                  </div>
                 </div>
+                <svg className="w-full h-8 mt-2 opacity-40" viewBox="0 0 100 20">
+                  <polyline points="0,14 20,11 40,13 60,9 80,10 100,7" fill="none" stroke="#9333ea" strokeWidth="2" />
+                </svg>
               </div>
             </div>
           </div>
 
-          {/* Second Row - Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Second Row - Top Charts */}
+          <div className={`grid grid-cols-1 lg:grid-cols-5 gap-6 transition-all duration-700 delay-100 ${
+            pageVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}>
             
-            {/* Health Overview - New Component */}
-            <div className="flex items-center justify-center">
+            {/* Health Overview - 2 columns */}
+            <div className="lg:col-span-2 flex items-center justify-center">
               <ProjectHealthDashboard />
             </div>
 
-            {/* Progress Distribution */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-              <h3 className="text-lg font-semibold text-slate-800 mb-6">进度分布</h3>
-              <div className="space-y-4">
-                {[
-                  { range: '0-25%', count: filteredProjects.filter(p => p.progress <= 25).length, color: 'bg-red-500' },
-                  { range: '26-50%', count: filteredProjects.filter(p => p.progress > 25 && p.progress <= 50).length, color: 'bg-orange-500' },
-                  { range: '51-75%', count: filteredProjects.filter(p => p.progress > 50 && p.progress <= 75).length, color: 'bg-yellow-500' },
-                  { range: '76-100%', count: filteredProjects.filter(p => p.progress > 75).length, color: 'bg-green-500' }
-                ].map((item) => (
-                  <div key={item.range} className="flex items-center gap-3">
-                    <div className="w-16 text-sm text-slate-600">{item.range}</div>
-                    <div className="flex-1 bg-slate-100 rounded-full h-3 overflow-hidden">
-                      <div 
-                        className={`h-full ${item.color} transition-all duration-500`}
-                        style={{ width: `${(item.count / filteredProjects.length) * 100}%` }}
-                      />
-                    </div>
-                    <div className="w-8 text-sm font-medium text-slate-700">{item.count}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Team Size Distribution */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-              <h3 className="text-lg font-semibold text-slate-800 mb-6">团队规模分布</h3>
-              <div className="h-48 flex items-end justify-center gap-8">
-                {[
-                  { size: '1-3人', count: filteredProjects.filter(p => p.teamSize <= 3).length, color: 'bg-gradient-to-t from-blue-400 to-blue-600' },
-                  { size: '4-6人', count: filteredProjects.filter(p => p.teamSize > 3 && p.teamSize <= 6).length, color: 'bg-gradient-to-t from-indigo-400 to-indigo-600' },
-                  { size: '7+人', count: filteredProjects.filter(p => p.teamSize > 6).length, color: 'bg-gradient-to-t from-purple-400 to-purple-600' }
-                ].map((item, idx) => {
-                  const maxCount = Math.max(
-                    filteredProjects.filter(p => p.teamSize <= 3).length,
-                    filteredProjects.filter(p => p.teamSize > 3 && p.teamSize <= 6).length,
-                    filteredProjects.filter(p => p.teamSize > 6).length,
-                    1
-                  );
-                  const heightPercent = (item.count / maxCount) * 70 + 15;
-                  return (
-                    <div key={item.size} className="flex flex-col items-center group cursor-pointer">
-                      <div className="text-lg font-bold text-slate-700 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        {item.count} 个项目
-                      </div>
-                      <div 
-                        className={`w-20 ${item.color} rounded-t-lg transition-all duration-500 hover:scale-105 shadow-lg relative overflow-hidden flex items-end justify-center pb-2`}
-                        style={{ height: `${heightPercent}%` }}
-                      >
-                        <span className="text-white font-bold text-xl">{item.count}</span>
-                      </div>
-                      <div className="text-sm text-slate-600 mt-3 font-medium">{item.size}</div>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="mt-6 text-center">
-                <div className="text-sm text-slate-500 mb-2">
-                  总计 {filteredProjects.reduce((sum, p) => sum + p.teamSize, 0)} 人参与 {filteredProjects.length} 个项目
-                </div>
-                <div className="flex justify-center gap-4 text-xs">
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span>小型团队</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
-                    <span>中型团队</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                    <span>大型团队</span>
-                  </div>
-                </div>
-              </div>
+            {/* Right Column - 3 columns */}
+            <div className="lg:col-span-3 space-y-6">
+              {/* Team Size Chart */}
+              <TeamSizeChart />
+              
+              {/* Quality Grade Chart */}
+              <QualityGradeChart />
             </div>
           </div>
 
-          {/* Third Row - Progress vs Risk */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          {/* Third Row - Progress Distribution (full width) */}
+          <div className={`transition-all duration-700 delay-200 ${
+            pageVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}>
+            <ProjectProgressChart />
+          </div>
+
+          {/* Fourth Row - Iteration Speed (full width) */}
+          <div className={`transition-all duration-700 delay-300 ${
+            pageVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}>
+            <IterationSpeedChart />
+          </div>
+
+          {/* Fifth Row - Progress vs Risk */}
+          <div className={`bg-white/60 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-700 delay-400 ${
+            pageVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}>
             <h3 className="text-lg font-semibold text-slate-800 mb-6">项目进度与风险对比</h3>
             <div className="space-y-3 max-h-80 overflow-y-auto">
               {filteredProjects.map((project) => (
@@ -376,107 +330,10 @@ export function ProjectAnalytics({ projects, onBackToGrid }: ProjectAnalyticsPro
             </div>
           </div>
 
-          {/* Fourth Row - Velocity Trends & Team Load */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            
-            {/* Velocity Trend */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-              <h3 className="text-lg font-semibold text-slate-800 mb-6">迭代速度趋势</h3>
-              <div className="h-64 relative">
-                <svg className="w-full h-full" viewBox="0 0 400 200">
-                  {/* Grid lines */}
-                  {[0, 1, 2, 3, 4].map(i => (
-                    <line key={i} x1="40" y1={40 + i * 32} x2="360" y2={40 + i * 32} stroke="#f1f5f9" strokeWidth="1" />
-                  ))}
-                  {/* Velocity line */}
-                  <polyline
-                    fill="none"
-                    stroke="url(#velocityGradient)"
-                    strokeWidth="3"
-                    points={Array.from({ length: 10 }, (_, i) => {
-                      const x = 40 + (i * 32);
-                      const baseVelocity = 25;
-                      const variation = Math.sin(i * 0.8) * 8 + Math.random() * 6;
-                      const velocity = Math.max(baseVelocity + variation, 15);
-                      const y = 170 - ((velocity - 15) / 35) * 130;
-                      return `${x},${y}`;
-                    }).join(' ')}
-                  />
-                  {/* Data points */}
-                  {Array.from({ length: 10 }, (_, i) => {
-                    const x = 40 + (i * 32);
-                    const baseVelocity = 25;
-                    const variation = Math.sin(i * 0.8) * 8 + Math.random() * 6;
-                    const velocity = Math.max(baseVelocity + variation, 15);
-                    const y = 170 - ((velocity - 15) / 35) * 130;
-                    return (
-                      <g key={i}>
-                        <circle cx={x} cy={y} r="4" fill="#3b82f6" className="hover:r-6 transition-all cursor-pointer" />
-                        <text x={x} y="190" textAnchor="middle" className="text-xs fill-slate-500">S{i + 15}</text>
-                      </g>
-                    );
-                  })}
-                  {/* Gradient definition */}
-                  <defs>
-                    <linearGradient id="velocityGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#3b82f6" />
-                      <stop offset="50%" stopColor="#8b5cf6" />
-                      <stop offset="100%" stopColor="#06b6d4" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
-              <div className="mt-4 flex items-center justify-center gap-6 text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                  <span className="text-slate-600">平均: 28点/周</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <span className="text-slate-600">目标: 35点/周</span>
-                </div>
-              </div>
-            </div>
 
-            {/* Quality Distribution */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-              <h3 className="text-lg font-semibold text-slate-800 mb-6">质量等级分布</h3>
-              <div className="space-y-6">
-                {[
-                  { grade: 'A', count: filteredProjects.filter(p => p.quality === 'A').length, color: 'from-green-400 to-green-600', bgColor: 'bg-green-100' },
-                  { grade: 'B', count: filteredProjects.filter(p => p.quality === 'B').length, color: 'from-yellow-400 to-yellow-600', bgColor: 'bg-yellow-100' },
-                  { grade: 'C', count: filteredProjects.filter(p => p.quality === 'C').length, color: 'from-red-400 to-red-600', bgColor: 'bg-red-100' }
-                ].map((item) => {
-                  const percentage = filteredProjects.length > 0 ? (item.count / filteredProjects.length) * 100 : 0;
-                  return (
-                    <div key={item.grade} className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-xl ${item.bgColor} flex items-center justify-center`}>
-                        <span className="font-bold text-lg">{item.grade}</span>
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-medium text-slate-700">质量等级 {item.grade}</span>
-                          <span className="text-sm text-slate-500">{item.count} 个项目</span>
-                        </div>
-                        <div className="w-full bg-slate-200 rounded-full h-3">
-                          <div 
-                            className={`h-3 rounded-full bg-gradient-to-r ${item.color} transition-all duration-500`}
-                            style={{ width: `${percentage}%` }}
-                          />
-                        </div>
-                      </div>
-                      <div className="text-lg font-bold text-slate-700 w-12 text-right">
-                        {Math.round(percentage)}%
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom Row - Auto-Scrolling Table */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <div className={`bg-white/60 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-slate-200/60 hover:shadow-lg transition-all duration-700 delay-500 ${
+            pageVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}>
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-slate-800">项目关键指标详情</h3>
               <div className="flex items-center gap-4">
